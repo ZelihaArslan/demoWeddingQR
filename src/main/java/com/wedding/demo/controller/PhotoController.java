@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class PhotoController {
@@ -21,24 +22,37 @@ public class PhotoController {
 
     @GetMapping("/")
     public String index(Model model) {
-        List<String> photos = photoService.getAllPhotos();
-        model.addAttribute("photos", photos);
+        List<Map<String, String>> mediaList = photoService.getAllMedia();
+        model.addAttribute("mediaList", mediaList);
         return "index";
     }
 
     @PostMapping("/upload")
-    public String uploadPhoto(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
-        if (file.isEmpty()) {
-            redirectAttributes.addFlashAttribute("message", "Lütfen bir dosya seçin.");
+    public String uploadFiles(@RequestParam("files") MultipartFile[] files, RedirectAttributes redirectAttributes) {
+        if (files == null || files.length == 0 || files[0].isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "Lütfen en az bir dosya seçin.");
             return "redirect:/";
         }
 
-        try {
-            photoService.uploadPhoto(file);
-            redirectAttributes.addFlashAttribute("message", "Fotoğraf başarıyla yüklendi!");
-        } catch (IOException e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("message", "Yükleme sırasında bir hata oluştu: " + e.getMessage());
+        int successCount = 0;
+        int errorCount = 0;
+
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                try {
+                    photoService.uploadFile(file);
+                    successCount++;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    errorCount++;
+                }
+            }
+        }
+
+        if (errorCount == 0) {
+            redirectAttributes.addFlashAttribute("message", successCount + " dosya başarıyla yüklendi!");
+        } else {
+            redirectAttributes.addFlashAttribute("message", successCount + " dosya yüklendi, " + errorCount + " dosyada hata oluştu.");
         }
 
         return "redirect:/";
