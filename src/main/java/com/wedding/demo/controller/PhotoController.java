@@ -55,6 +55,14 @@ public class PhotoController {
             redirectAttributes.addFlashAttribute("message", successCount + " dosya yüklendi, " + errorCount + " dosyada hata oluştu.");
         }
 
+        // **ÇÖZÜM: Cloudinary'ye dosyaları işlemesi için zaman tanıyoruz.**
+        // Bu, yönlendirme sonrası yeni yüklenen medyanın görünmesini sağlar.
+        try {
+            Thread.sleep(3000); // 3 saniye bekle
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
         return "redirect:/";
     }
 }
