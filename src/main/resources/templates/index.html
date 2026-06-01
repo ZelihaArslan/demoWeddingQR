@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Düğün Albümümüz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fcfcfc;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #e88fae;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        .upload-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            max-width: 500px;
+            margin: 0 auto 30px auto;
+        }
+        input[type="file"] {
+            margin-bottom: 15px;
+        }
+        button {
+            background-color: #e88fae;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #d17594;
+        }
+        .message {
+            margin-top: 15px;
+            color: #28a745;
+            font-weight: bold;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .gallery img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>💍 Düğün Albümümüze Hoş Geldiniz! 🤍</h1>
+
+    <div class="upload-container">
+        <h2>Güzel Anılarınızı Bizimle Paylaşın</h2>
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/png, image/jpeg, image/jpg" required>
+            <br>
+            <button type="submit">Fotoğraf Yükle</button>
+        </form>
+
+        <div th:if="${message}" class="message">
+            <p th:text="${message}"></p>
+        </div>
+    </div>
+
+    <div class="gallery">
+        <div th:each="photoUrl : ${photos}">
+            <img th:src="${photoUrl}" alt="Düğün Fotoğrafı">
+        </div>
+    </div>
+
+</body>
+</html>
